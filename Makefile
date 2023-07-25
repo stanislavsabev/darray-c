@@ -1,12 +1,15 @@
 
 CC=gcc
-CFLAGS = -Wall -Wextra -std=c17
-SRC_DIR= src
-OBJ_DIR= obj
-BIN_DIR= bin
-DEBUG_DIR= $(OBJ_DIR)/debug
+CSTANDARD=-std=c17
+WFLAGS=-Wall -Wextra
+CFLAGS=$(WFLAGS) $(CSTANDARD)
+
+SRC_DIR=src
+OBJ_DIR=obj
+BIN_DIR=bin
+DEBUG_DIR=$(OBJ_DIR)/debug
 BIN_DEBUG_DIR=$(BIN_DIR)/debug
-TARGET_NAME= main
+TARGET_NAME=main
 
 # compile macros
 TARGET_NAME := main
@@ -40,14 +43,14 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c*
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 $(DEBUG_DIR)/%.o: $(SRC_DIR)/%.c*
-	$(CC) $(CFLAGS) -c -g -o $@ $<
+	$(CC) $(CFLAGS) -c -g -o $@ $^
 
 $(TARGET_DEBUG): $(OBJS_DEBUG)
-	$(CC) $(CFLAGS) -g $< -o $@
-
+	$(CC) $(CFLAGS) -g -o $@ $^
+ 
 # phony rules
 .PHONY: makedir
 makedir: ## Create buld directories

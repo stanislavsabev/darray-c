@@ -20,16 +20,13 @@ typedef struct
 
 
 static int _ensure_capacity(DArray* arr){
-    if(arr->size < arr->capacity){
-        return 0;
+    if(arr->size >= arr->capacity){
+        arr->capacity *= DEFAULT_GROW_RATE;
+        arr->data = realloc(arr->data, arr->capacity * sizeof(int));
+        if(arr->data == NULL){
+            return 1;
+        }
     }
-
-    size_t new_capacity = arr->capacity * DEFAULT_GROW_RATE;
-    arr->data = realloc(arr->data, new_capacity * sizeof(int));
-    if(arr->data == NULL){
-        return 1;
-    }
-    arr->capacity = new_capacity;
     return 0;
 }
 
@@ -38,7 +35,7 @@ DArray da_create(){
 
     DArray arr;
     
-    arr.data = (int*)calloc(DEFAULT_CAPACITY * sizeof(int), sizeof(int));
+    arr.data = (int*)malloc(DEFAULT_CAPACITY * sizeof(int));
     if (arr.data == NULL)
     {
         fprintf(stderr, "da_create error %d\n", errno);

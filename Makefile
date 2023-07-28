@@ -8,6 +8,7 @@ BIN=bin
 TARGET=main
 
 SRCS=$(wildcard $(SRC)/*.c)
+HSRCS=$(wildcard $(SRC)/*.h)
 OBJS=$(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
 
 .PHONY: all
@@ -19,7 +20,7 @@ help: ## Show this message
 
 .PHONY: dirs
 dirs: ## Create build directories
-	mkdir -p $(OBJ) $(BIN)
+	@mkdir -p $(OBJ) $(BIN)
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
@@ -28,7 +29,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(BIN)/$(TARGET)
 
 .PHONY: build
-build: dirs $(TARGET) ## Build target
+build: dirs Makefile $(TARGET) ## Build target
 
 .PHONY: rebuild
 rebuild: clean build ## Cleanup and build target
@@ -45,3 +46,7 @@ clean: ## Clean up
 release: CFLAGS=-Wall $(STD) -O2 -DNDEBUG
 release: clean
 release: $(TARGET)
+
+.PHONY: check
+check:
+	@valgrind --undef-value-errors=no  ./$(BIN)/$(TARGET)

@@ -40,3 +40,8 @@ run: $(TARGET) ## Run target
 .PHONY: clean ## Clean up build directories
 clean: ## Clean up
 	$(RM) $(OBJ)/* $(BIN)/*
+
+.PHONY: release
+release: CFLAGS=-Wall $(STD) -O2 -DNDEBUG
+release: clean
+release: $(TARGET)

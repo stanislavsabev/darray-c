@@ -1,82 +1,73 @@
-# Simple C project
+# Dynamic array in C
 
-Template for simple C project setup on Linux.
+An implementation of type safe, dynamic array in C.
 
-# Project Setup
+It is using extra padding in the front as storage for meta-data about capacity and size.
 
-## Prerequisites
+The user is given a pointer to first element of the `data`.
 
-Install the following tools:
-- make
-- gcc / clang
+## Usage:
 
-## Clone this repository
+```c
+#include <stdio.h>
 
-```shell
-$ git clone https://github.com/stanislavsabev/proj_setup_python.git <your-project-name>
-$ cd  <your-project-name>
+#include "darray.h"
+
+void print_arr(int* arr);
+
+int main(int argc, char* argv[]) {
+
+    (void)argc;
+    (void)argv;
+
+    // add some elements
+    darr_type(int) arr = NULL;
+    darr_push_back(arr, 10);
+    darr_push_back(arr, 20);
+    darr_push_back(arr, 30);
+    darr_push_back(arr, 40);
+    print_arr(arr);
+
+    // accessing elements is same as with normal array
+    printf("arr[2] is: %d\n", arr[2]);
+    
+    // remove an element at index
+    size_t i = 2;
+    darr_remove(arr, i, NULL);
+    print_arr(arr);
+
+    // pop element from the back
+    int dest = 0;
+    darr_pop_back(arr, &dest);
+    printf("popped value %d at %p\n", dest, &dest);
+    
+    // print out some stats
+    printf("pointer   : %p\n", (void*)arr);
+    printf("capacity  : %zu\n", darr_capacity(arr));
+    printf("size      : %zu\n", darr_size(arr));
+    printf("last elem : %d \n\n", *darr_back(arr));
+
+    // free the memory (frees the meta data too)
+    darr_free(arr);
+    return 0;
+}
+
+void print_arr(int* arr) {
+    /* iterator over the vector using "iterator" style */
+    if (arr) {
+        int* it;
+        int i = 0;
+        for (it = darr_begin(arr); it != darr_end(arr); ++it) {
+            printf("arr[%d] = %d\n", i, *it);
+            ++i;
+        }
+    }
+}
+
 ```
 
-(Optionally) re-init the .git folder:
 
-```shell
-$ git init
-
-```
-
-## Development
-
-Use the `Makefile`
-
-Help
-```shell
-$ make help
-Usage:
-  make <target>
-
-Targets:
-  help        Show this message
-  makedir     Create build directories
-  build       Build Release
-  build_debug  Build Debug
-  debug       Run Debug
-  run         Run Release
-  clean       Clean build directories
-```
+## Credit to
+https://github.com/eteran/c-vector - used as original source
 
 
-Build
-
-```shell
-$ make build
-gcc -Wall -Wextra -std=c17 -c -o obj/main.o src/main.c
-gcc -Wall -Wextra -std=c17 -o bin/main obj/main.o
-build: OK
-
-$ make build_debug
-gcc -Wall -Wextra -std=c17 -c -g -o obj/debug/main.o src/main.c
-gcc -Wall -Wextra -std=c17 -g obj/debug/main.o -o bin/debug/main
-build debug: OK
-```
-
-
-Run
-
-```shell
-$ make run
-build: OK
-run: ./bin/main
-Hello world!
-
-$ make debug
-build debug: OK
-debug: ./bin/debug/main
-Hello world!
-```
-
-Clean up
-
-```shell
-$ make clean
-Clean bin obj
-```

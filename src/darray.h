@@ -49,17 +49,17 @@ typedef struct darr_meta_t {
 /**
  * @brief Gets current capacity of the array
  * @param darr - the array
- * @return the capacity as a size_t
+ * @return the array capacity as size_t
  */
 #define darr_capacity(darr) \
     ((darr) ? _darr_arr_to_meta(darr)->capacity : (size_t)0)
 
 /**
- * @brief darr_size - gets the current size of the array
+ * @brief Gets the current array length.
  * @param darr - the array
- * @return the size as a size_t
+ * @return the array length as size_t
  */
-#define darr_size(darr) \
+#define darr_len(darr) \
     ((darr) ? _darr_arr_to_meta(darr)->size : (size_t)0)
 
 /**
@@ -67,7 +67,7 @@ typedef struct darr_meta_t {
  * @param darr - the array
  * @return non-zero if empty, zero if non-empty
  */
-#define darr_is_empty(darr) (darr_size(darr) == 0)
+#define darr_is_empty(darr) (darr_len(darr) == 0)
 
 /**
  * @brief Requests that the array be at least <size> elements big.
@@ -124,7 +124,7 @@ typedef struct darr_meta_t {
  * @param darr - the array
  * @return a pointer to one past the last element or NULL
  */
-#define darr_end(darr) ((darr) ? &((darr)[darr_size(darr)]) : NULL)
+#define darr_end(darr) ((darr) ? &((darr)[darr_len(darr)]) : NULL)
 
 /**
  * @brief Returns an iterator to the last element of
@@ -132,7 +132,7 @@ typedef struct darr_meta_t {
  * @param darr - the array
  * @return a pointer to the last element or NULL
  */
-#define darr_back(darr) ((darr) ? &((darr)[darr_size(darr) - 1]) : NULL)
+#define darr_back(darr) ((darr) ? &((darr)[darr_len(darr) - 1]) : NULL)
 
 /**
  * @brief darr_compute_next_grow - returns the size of the next grow.
@@ -152,11 +152,11 @@ typedef struct darr_meta_t {
 #define darr_push_back(darr, value)                               \
     do {                                                          \
         size_t cv_cap__ = darr_capacity(darr);                    \
-        if (cv_cap__ <= darr_size(darr)) {                        \
+        if (cv_cap__ <= darr_len(darr)) {                        \
             _darr_grow((darr), darr_compute_next_grow(cv_cap__)); \
         }                                                         \
-        (darr)[darr_size(darr)] = (value);                        \
-        _darr_set_size((darr), darr_size(darr) + 1);              \
+        (darr)[darr_len(darr)] = (value);                        \
+        _darr_set_size((darr), darr_len(darr) + 1);              \
     } while (0)
 
 /**
@@ -169,15 +169,15 @@ typedef struct darr_meta_t {
 #define darr_insert(darr, index, val)                                 \
     do {                                                              \
         size_t cv_cap__ = darr_capacity(darr);                        \
-        if (cv_cap__ <= darr_size(darr)) {                            \
+        if (cv_cap__ <= darr_len(darr)) {                            \
             _darr_grow((darr), darr_compute_next_grow(cv_cap__));     \
         }                                                             \
-        if ((index) < darr_size(darr)) {                              \
+        if ((index) < darr_len(darr)) {                              \
             memmove((darr) + (index) + 1, (darr) + (index),           \
-                    sizeof(*(darr)) * ((darr_size(darr)) - (index))); \
+                    sizeof(*(darr)) * ((darr_len(darr)) - (index))); \
         }                                                             \
         (darr)[(index)] = (val);                                      \
-        _darr_set_size((darr), darr_size(darr) + 1);                  \
+        _darr_set_size((darr), darr_len(darr) + 1);                  \
     } while (0)
 
 /**
@@ -190,10 +190,10 @@ typedef struct darr_meta_t {
 #define darr_pop_back(darr, elem_ptr)                          \
     do {                                                       \
         if ((elem_ptr)) {                                      \
-            memcpy((elem_ptr), &((darr)[darr_size(darr) - 1]), \
+            memcpy((elem_ptr), &((darr)[darr_len(darr) - 1]), \
                    sizeof(*(darr)));                           \
         }                                                      \
-        _darr_set_size((darr), darr_size(darr) - 1);           \
+        _darr_set_size((darr), darr_len(darr) - 1);           \
     } while (0)
 
 /**
@@ -206,12 +206,12 @@ typedef struct darr_meta_t {
 #define darr_remove(darr, index, elem_ptr)                             \
     do {                                                               \
         if (darr) {                                                    \
-            const size_t cv_sz__ = darr_size(darr);                    \
+            const size_t cv_sz__ = darr_len(darr);                    \
             if ((index) == cv_sz__ - 1) {                              \
                 darr_pop_back(darr, elem_ptr);                     \
             } else if ((index) < cv_sz__) {                            \
                 if ((elem_ptr)) {                                      \
-                    memcpy((elem_ptr), &((darr)[darr_size(darr) - 1]), \
+                    memcpy((elem_ptr), &((darr)[darr_len(darr) - 1]), \
                            sizeof(*(darr)));                           \
                 }                                                      \
                 _darr_set_size((darr), cv_sz__ - 1);                   \
@@ -230,9 +230,9 @@ typedef struct darr_meta_t {
 #define darr_copy(src, dest)                                        \
     do {                                                            \
         if ((src)) {                                                \
-            _darr_grow(dest, darr_size(src));                       \
-            _darr_set_size(dest, darr_size(src));                   \
-            memcpy((dest), (src), darr_size(src) * sizeof(*(src))); \
+            _darr_grow(dest, darr_len(src));                       \
+            _darr_set_size(dest, darr_len(src));                   \
+            memcpy((dest), (src), darr_len(src) * sizeof(*(src))); \
         }                                                           \
     } while (0)
 

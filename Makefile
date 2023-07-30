@@ -25,7 +25,7 @@ dirs: ## Create build directories
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(HSRCS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(BIN)/$(TARGET)
 
 .PHONY: build

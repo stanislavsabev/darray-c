@@ -5,21 +5,20 @@
 void print_arr(int* arr);
 
 int main(int argc, char* argv[]) {
-
     (void)argc;
     (void)argv;
 
     // add some elements
     darr_type(int) arr = NULL;
-    darr_push_back(arr, 10);
-    darr_push_back(arr, 20);
-    darr_push_back(arr, 30);
-    darr_push_back(arr, 40);
+    darr_append(arr, 10);
+    darr_append(arr, 20);
+    darr_append(arr, 30);
+    darr_append(arr, 40);
     print_arr(arr);
 
     // accessing elements is same as with normal array
     printf("arr[2] is: %d\n", arr[2]);
-    
+
     // remove an element at index
     size_t i = 2;
     darr_remove(arr, i, NULL);
@@ -29,11 +28,11 @@ int main(int argc, char* argv[]) {
     int dest = 0;
     darr_pop_back(arr, &dest);
     printf("popped value %d at %p\n", dest, &dest);
-    
+
     // print out some stats
     printf("pointer   : %p\n", (void*)arr);
     printf("capacity  : %zu\n", darr_capacity(arr));
-    printf("size      : %zu\n", darr_size(arr));
+    printf("size      : %zu\n", darr_len(arr));
     printf("last elem : %d \n\n", *darr_back(arr));
 
     // free the memory (frees the meta data too)
